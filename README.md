@@ -4,6 +4,21 @@ API de la app **Matrices** (suma y resta de matrices). Python + FastAPI,
 PostgreSQL y RapidOCR (modelos PP-OCR, en el propio servidor) para leer matrices desde fotos. La app está en
 `../matrices_app`.
 
+## Desplegado
+
+| | URL |
+| --- | --- |
+| Landing (descripción, instalar en iPhone / Android / PC) | https://matrices.quantis.site |
+| App web / PWA | https://matrices.quantis.site/app/ |
+| Publicar APK nuevo | https://matrices.quantis.site/subir |
+| API | https://matricesapi.quantis.site |
+| Estado de la API | https://matricesapi.quantis.site/health |
+| Documentación de la API | https://matricesapi.quantis.site/docs |
+| Descarga del APK | https://matricesapi.quantis.site/api/apk/download |
+
+Repos: [matrices-api](https://github.com/dalvarez005/matrices-api) · [matrices-app](https://github.com/dalvarez005/matrices-app).
+Servidor: Orange Pi (Docker) detrás del túnel de Cloudflare.
+
 ## Qué hace
 
 | Ruta | Sesión | Qué es |
