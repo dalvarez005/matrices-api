@@ -1,0 +1,36 @@
+[project]
+name = "matrices-api"
+version = "0.1.0"
+description = "API de suma y resta de matrices (historial, login con Google, OCR)"
+readme = "README.md"
+authors = [
+    { name = "Diego Castañeda", email = "ricardoalvaraez@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.143.0",
+    "google-auth>=2.62.0",
+    "onnxruntime>=1.31.0",
+    "pillow>=12.3.0",
+    "psycopg[binary]>=3.3.6",
+    "pydantic-settings>=2.15.0",
+    "pyjwt>=2.15.1",
+    "python-multipart>=0.0.32",
+    "rapidocr>=3.10.0",
+    "requests>=2.34.2",
+    "sqlalchemy>=2.1.4",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+matrices-api = "matrices_api:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.1",
+    "pytest>=9.1.1",
+]

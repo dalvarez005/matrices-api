@@ -1,0 +1,30 @@
+# API de matrices en Docker. Usa el PostgreSQL que ya corre en el servidor
+# (el mismo de Yankees, con otra base). Guía: docs/DEPLOY.md
+name: matrices
+
+services:
+  api:
+    build: .
+    image: matrices-api:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: ${DB_HOST:-host.docker.internal}
+    ports:
+      - "${API_PORT:-5120}:8080"
+    volumes:
+      # APK de Android publicado desde la landing. En la Orange Pi va en la
+      # memoria USB (DATA_PATH en .env); sin DATA_PATH, un volumen de Docker.
+      - ${DATA_PATH:-data}:/data
+    mem_limit: 320m
+    extra_hosts:
+      # Para llegar al PostgreSQL del propio servidor desde el contenedor.
+      - "host.docker.internal:host-gateway"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  data:
