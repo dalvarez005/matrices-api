@@ -1,6 +1,6 @@
 # matrices-api
 
-API de la app **Matrices** (suma y resta de matrices). Python + FastAPI,
+API de la app **MatriCalc** (suma y resta de matrices). Python + FastAPI,
 PostgreSQL y RapidOCR (modelos PP-OCR, en el propio servidor) para leer matrices desde fotos. La app está en
 `../matrices_app`.
 
@@ -27,8 +27,8 @@ Servidor: Orange Pi (Docker) detrás del túnel de Cloudflare.
 | `POST /api/auth/google` | – | `{ "idToken" }` de Google → `{ token, user }` (token de 30 días). |
 | `GET /api/auth/me` | sí | Usuario de la sesión. |
 | `DELETE /api/auth/me` | sí | Borra la cuenta y su historial. |
-| `POST /api/calculate` | opcional | `{ operation: "add"\|"subtract", a, b, source? }` → resultado. Con sesión se guarda en el historial. |
-| `GET /api/history?limit=20&before=<id>` | sí | Historial del usuario, más reciente primero. |
+| `POST /api/calculate` | opcional | `{ matrices: [A, B, C…], operators: ["+", "-"…], source? }` (2 a 8 matrices del mismo tamaño, un operador entre cada par, de izquierda a derecha) → resultado. También acepta la forma simple `{ operation: "add"\|"subtract", a, b }`. Con sesión se guarda en el historial. |
+| `GET /api/history?limit=20&before=<id>` | sí | Historial del usuario, más reciente primero (cada operación trae `matrices` y `operators`). |
 | `DELETE /api/history/{id}` / `DELETE /api/history` | sí | Borrar una / todas. |
 | `POST /api/ocr` | opcional | Foto (`file`, multipart) → una o dos matrices detectadas, celdas ilegibles en `null`. |
 

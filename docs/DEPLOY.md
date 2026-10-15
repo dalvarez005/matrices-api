@@ -3,7 +3,7 @@
 Igual que Yankees: la API corre en Docker y usa el PostgreSQL que ya existe
 en el servidor (mismo usuario `quantis`, **base nueva `matrices`**).
 
-| | Yankees | Matrices |
+| | Yankees | MatriCalc |
 | --- | --- | --- |
 | API | `~/yankees-api`, puerto 5114 | `~/matrices-api`, puerto **5120** |
 | Web | `~/yankees-web`, puerto 5180 | `~/matrices-web`, puerto **5190** |
