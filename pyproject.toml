@@ -1,7 +1,7 @@
 [project]
 name = "matrices-api"
-version = "0.1.0"
-description = "API de suma y resta de matrices (historial, login con Google, OCR)"
+version = "1.1.0"
+description = "API de MatriCalc: suma y resta de matrices (historial, login con Google, OCR)"
 readme = "README.md"
 authors = [
     { name = "Diego Castañeda", email = "ricardoalvaraez@gmail.com" }

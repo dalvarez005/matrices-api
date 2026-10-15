@@ -1,6 +1,6 @@
 import pytest
 
-from matrices_api.matrix import MatrixError, calculate
+from matrices_api.matrix import MatrixError, calculate, evaluate
 
 
 def test_suma_y_resta_enteros():
@@ -35,3 +35,28 @@ def test_fracciones():
 def test_errores(a, b, msg):
     with pytest.raises(MatrixError, match=msg):
         calculate("add", a, b)
+
+
+def test_expresion_compuesta():
+    a, b, c = [["1", "2"]], [["3", "4"]], [["10", "0.5"]]
+    assert evaluate([a, b, c], ["+", "-"]) == [["-6", "5.5"]]
+    assert evaluate([a, b, c], ["-", "-"]) == [["-12", "-2.5"]]
+    # Cuatro matrices, con fracción solo donde alguna la tenía.
+    d = [["1/3", "1"]]
+    assert evaluate([a, b, c, d], ["+", "+", "+"]) == [["43/3", "7.5"]]
+
+
+@pytest.mark.parametrize(
+    "matrices,operators,msg",
+    [
+        ([[["1"]]], [], "entre 2 y"),
+        ([[["1"]]] * 9, ["+"] * 8, "entre 2 y"),
+        ([[["1"]], [["1"]], [["1"]]], ["+"], "un operador entre cada par"),
+        ([[["1"]], [["1"]]], ["*"], "Operador inválido"),
+        ([[["1"]], [["1"]], [["1", "2"]]], ["+", "-"], "C es 1x2"),
+        ([[["1"]], [["1"]], [["y"]]], ["+", "-"], "Matriz C: Valor inválido"),
+    ],
+)
+def test_errores_compuestas(matrices, operators, msg):
+    with pytest.raises(MatrixError, match=msg):
+        evaluate(matrices, operators)

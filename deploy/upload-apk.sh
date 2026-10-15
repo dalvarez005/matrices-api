@@ -5,7 +5,7 @@
 set -euo pipefail
 
 APK="$1"; VERSION="$2"; NOTES="${3:-}"
-API="${API_URL:-https://matricesapi.quantis.site}"
+API="${API_URL:-https://matricalcapi.quantis.site}"
 : "${APK_UPLOAD_KEY:?Define APK_UPLOAD_KEY}"
 
 curl -fS --progress-bar -X POST "$API/api/apk" \
