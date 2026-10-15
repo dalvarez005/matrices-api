@@ -8,7 +8,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request, UploadFile,
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.concurrency import run_in_threadpool
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
@@ -18,11 +18,12 @@ from .apk import router as apk_router
 from .auth import current_user, issue_token, optional_user, upsert_google_user, verify_google_token
 from .config import get_settings
 from .db import Operation, User, get_db
-from .matrix import MatrixError, calculate, normalize
+from .matrix import MAX_MATRICES, MatrixError, evaluate, normalize
 
 log = logging.getLogger("matrices")
 
 Matrix = list[list[str]]
+Operator = Literal["+", "-"]
 
 
 @asynccontextmanager
@@ -34,7 +35,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Matrices API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="MatriCalc API", version="1.1.0", lifespan=lifespan)
 
 _settings = get_settings()
 app.add_middleware(
@@ -78,17 +79,45 @@ class SessionOut(BaseModel):
 
 
 class CalculateIn(BaseModel):
-    operation: Literal["add", "subtract"]
-    a: Matrix
-    b: Matrix
+    """Una expresión A ± B ± C …
+
+    Se envía como [matrices] + [operators] (uno entre cada par), o en la forma
+    simple de siempre: [operation] con [a] y [b].
+    """
+
+    matrices: list[Matrix] | None = Field(None, min_length=2, max_length=MAX_MATRICES)
+    operators: list[Operator] | None = None
+    operation: Literal["add", "subtract"] | None = None
+    a: Matrix | None = None
+    b: Matrix | None = None
     source: Literal["manual", "image"] = "manual"
     # Con sesión se guarda en el historial salvo que se pida lo contrario.
     save: bool = True
+
+    @model_validator(mode="after")
+    def _expression(self) -> "CalculateIn":
+        if self.matrices is None:
+            if self.operation is None or self.a is None or self.b is None:
+                raise ValueError("Envía 'matrices' y 'operators', o 'operation' con 'a' y 'b'.")
+            self.matrices = [self.a, self.b]
+            self.operators = ["+" if self.operation == "add" else "-"]
+        elif self.operators is None or len(self.operators) != len(self.matrices) - 1:
+            raise ValueError("Debe haber un operador entre cada par de matrices.")
+        return self
+
+
+def operation_name(operators: list[str]) -> str:
+    if len(operators) > 1:
+        return "compound"
+    return "add" if operators[0] == "+" else "subtract"
 
 
 class OperationOut(BaseModel):
     id: int | None
     operation: str
+    matrices: list[Matrix]
+    operators: list[Operator]
+    # Las dos primeras matrices, para clientes anteriores.
     a: Matrix
     b: Matrix
     result: Matrix
@@ -97,9 +126,12 @@ class OperationOut(BaseModel):
 
     @classmethod
     def of(cls, o: Operation) -> "OperationOut":
+        matrices = o.matrices or [o.matrix_a, o.matrix_b]
+        operators = o.operators or ["-" if o.operation == "subtract" else "+"]
         return cls(
-            id=o.id, operation=o.operation, a=o.matrix_a, b=o.matrix_b,
-            result=o.result, source=o.source, createdAt=o.created_at,
+            id=o.id, operation=o.operation, matrices=matrices, operators=operators,
+            a=matrices[0], b=matrices[1], result=o.result, source=o.source,
+            createdAt=o.created_at,
         )
 
 
@@ -155,9 +187,17 @@ def calculate_route(
     user: User | None = Depends(optional_user),
     db: Session = Depends(get_db),
 ):
-    a, b = normalize(body.a), normalize(body.b)
-    result = calculate(body.operation, a, b)
-    op = Operation(operation=body.operation, matrix_a=a, matrix_b=b, result=result, source=body.source)
+    matrices = [normalize(m) for m in body.matrices]
+    result = evaluate(matrices, body.operators)
+    op = Operation(
+        operation=operation_name(body.operators),
+        matrix_a=matrices[0],
+        matrix_b=matrices[1],
+        matrices=matrices,
+        operators=body.operators,
+        result=result,
+        source=body.source,
+    )
     if user is not None and body.save:
         op.user_id = user.id
         db.add(op)
