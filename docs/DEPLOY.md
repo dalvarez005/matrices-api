@@ -53,8 +53,8 @@ Si `/health` dice `"db": false`, casi siempre es `pg_hba.conf` (paso 1).
 
 ## APK de Android
 
-La landing (`matrices.quantis.site`) ofrece el APK publicado. Para subir uno
-nuevo: `https://matrices.quantis.site/subir` (pide `APK_UPLOAD_KEY`), o desde
+La landing (`matricalc.quantis.site`) ofrece el APK publicado. Para subir uno
+nuevo: `https://matricalc.quantis.site/subir` (pide `APK_UPLOAD_KEY`), o desde
 la PC:
 
 ```bash
@@ -70,10 +70,13 @@ disco interno de 7 GB. La carpeta debe pertenecer al usuario del contenedor
 
 En el mismo túnel de Yankees, dos hostnames públicos:
 
-- `matricesapi.quantis.site` → `http://localhost:5120`
-- `matrices.quantis.site` → `http://localhost:5190` (la web, ver `../matrices_app`)
+- `matricalcapi.quantis.site` → `http://localhost:5120`
+- `matricalc.quantis.site` → `http://localhost:5190` (la web, ver `../matrices_app`)
 
-y en `.env`: `CORS_ORIGINS=https://matrices.quantis.site`. Si usas otros
+Los dominios anteriores siguen en el túnel: `matricesapi.quantis.site` (lo usa
+el APK 1.0.0) y `matrices.quantis.site` (nginx lo redirige al nuevo).
+
+y en `.env`: `CORS_ORIGINS=https://matricalc.quantis.site,https://matrices.quantis.site`. Si usas otros
 dominios, cámbialos también en `matrices_app/lib/app/env.dart` y
 `web/index.html`.
 

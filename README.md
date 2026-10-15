@@ -8,13 +8,13 @@ PostgreSQL y RapidOCR (modelos PP-OCR, en el propio servidor) para leer matrices
 
 | | URL |
 | --- | --- |
-| Landing (descripción, instalar en iPhone / Android / PC) | https://matrices.quantis.site |
-| App web / PWA | https://matrices.quantis.site/app/ |
-| Publicar APK nuevo | https://matrices.quantis.site/subir |
-| API | https://matricesapi.quantis.site |
-| Estado de la API | https://matricesapi.quantis.site/health |
-| Documentación de la API | https://matricesapi.quantis.site/docs |
-| Descarga del APK | https://matricesapi.quantis.site/api/apk/download |
+| Landing (descripción, instalar en iPhone / Android / PC) | https://matricalc.quantis.site |
+| App web / PWA | https://matricalc.quantis.site/app/ |
+| Publicar APK nuevo | https://matricalc.quantis.site/subir |
+| API | https://matricalcapi.quantis.site |
+| Estado de la API | https://matricalcapi.quantis.site/health |
+| Documentación de la API | https://matricalcapi.quantis.site/docs |
+| Descarga del APK | https://matricalcapi.quantis.site/api/apk/download |
 
 Repos: [matrices-api](https://github.com/dalvarez005/matrices-api) · [matrices-app](https://github.com/dalvarez005/matrices-app).
 Servidor: Orange Pi (Docker) detrás del túnel de Cloudflare.
